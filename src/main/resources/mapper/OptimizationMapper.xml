@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csdn.xs.exhausts.mapper.OptimizationMapper">
+    <resultMap id="optimization" type="com.csdn.xs.exhausts.domain.OptimizationDomain">
+        <result column="车牌" property="licensePlate" javaType="String" jdbcType="VARCHAR"/>
+        <result column="遥测时间" property="remoteSenseTime" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        <result column="设备" property="fixture" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="HC浓度" property="hc" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="NO浓度" property="no" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="CO浓度" property="co" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="量化指标" property="vei" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="评估结果" property="result" javaType="String" jdbcType="VARCHAR"/>
+        <result column="车牌种类" property="licenseType" javaType="String" jdbcType="VARCHAR"/>
+        <result column="单一识别码" property="recognizeCode" javaType="String" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="optimization">
+        select * from optimization_result;
+    </select>
+
+    <select id="findCurrentMonthData" resultMap="optimization">
+        select * from optimization_result
+          where DATE_FORMAT(遥测时间, '%Y%m') = DATE_FORMAT(now(), '%Y%m') order by 车牌;
+    </select>
+
+    <insert id="saveOptimization">
+        insert into optimization_result(
+        车牌,
+        遥测时间,
+        设备,
+        HC浓度,
+        NO浓度,
+        CO浓度,
+        量化指标,
+        评估结果,
+        车牌种类,
+        单一识别码
+        ) values
+        (
+        #{domain.licensePlate,jdbcType=VARCHAR},
+        #{domain.remoteSenseTime,jdbcType=TIMESTAMP},
+        #{domain.fixture,jdbcType=INTEGER} ,
+        #{domain.hc,jdbcType=DOUBLE} ,
+        #{domain.no,jdbcType=DOUBLE} ,
+        #{domain.co,jdbcType=DOUBLE} ,
+        #{domain.vei,jdbcType=DOUBLE} ,
+        #{domain.result,jdbcType=VARCHAR},
+        #{domain.licenseType,jdbcType=VARCHAR} ,
+        #{domain.recognizeCode,jdbcType=VARCHAR}
+        );
+    </insert>
+
+    <insert id="saveOptimizations" parameterType="java.util.List">
+        insert into optimization_result(
+        车牌,
+        遥测时间,
+        设备,
+        HC浓度,
+        NO浓度,
+        CO浓度,
+        量化指标,
+        评估结果,
+        车牌种类,
+        单一识别码
+        ) values
+        <foreach collection="list" index="index" item="item" separator=",">
+            (
+            #{item.licensePlate,jdbcType=VARCHAR},
+            #{item.remoteSenseTime,jdbcType=TIMESTAMP},
+            #{item.fixture,jdbcType=INTEGER} ,
+            #{item.hc,jdbcType=DOUBLE} ,
+            #{item.no,jdbcType=DOUBLE} ,
+            #{item.co,jdbcType=DOUBLE} ,
+            #{item.vei,jdbcType=DOUBLE} ,
+            #{item.result,jdbcType=VARCHAR},
+            #{item.licenseType,jdbcType=VARCHAR} ,
+            #{item.recognizeCode,jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+    <select id="findOptimizeHoursAgo" resultMap="optimization">
+          select * from optimization_result where 遥测时间 > SUBDATE(now(), interval #{gap,jdbcType=INTEGER} hour) order by 车牌;
+    </select>
+    <select id="findOptimizeAfterID" resultMap="optimization">
+          select * from optimization_result where id > #{id,jdbcType=BIGINT} ;
+    </select>
+</mapper>

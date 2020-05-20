@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csdn.xs.exhausts.mapper.MeasurementMapper">
+    <resultMap id="measurement" type="com.csdn.xs.exhausts.domain.MeasurementDomain">
+        <result column="车牌号码" property="licensePlate" javaType="String" jdbcType="VARCHAR"/>
+        <result column="车辆注册型号" property="registerType" javaType="String" jdbcType="VARCHAR"/>
+        <result column="车辆注册地址" property="registerDistrict" javaType="String" jdbcType="VARCHAR"/>
+        <result column="车辆登记时间" property="registerDate" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        <result column="车辆排放标准" property="dischargeStandard" javaType="String" jdbcType="CHAR"/>
+        <result column="车辆燃料种类" property="fuelType" javaType="java.lang.Character" jdbcType="CHAR"/>
+        <result column="发动机排量" property="engineDisplacement" javaType="Integer" jdbcType="DECIMAL"/>
+        <result column="累计行驶里程" property="totalDistance" javaType="Integer" jdbcType="DECIMAL"/>
+        <result column="尾气检测方法" property="measureMethod" javaType="String" jdbcType="VARCHAR"/>
+        <result column="车辆重量" property="weight" javaType="Integer" jdbcType="DECIMAL"/>
+        <result column="机动车末端处理设施设备名称" property="fixtureName" javaType="java.lang.Character" jdbcType="CHAR"/>
+        <result column="机动车末端处理设施设备类型" property="fixtureType" javaType="java.lang.Character" jdbcType="CHAR"/>
+        <result column="尾气检测时间" property="measureDate" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        <result column="逐秒车速" property="velocityPerSecond" javaType="Double" jdbcType="DECIMAL"/>
+        <result column="逐秒测功机载荷" property="loadPerSecond" javaType="Double" jdbcType="DECIMAL"/>
+        <result column="逐秒HC浓度" property="hc" javaType="Double" jdbcType="DECIMAL"/>
+        <result column="逐秒CO浓度" property="co" javaType="Double" jdbcType="DECIMAL"/>
+        <result column="逐秒NO浓度" property="no" javaType="Double" jdbcType="DECIMAL"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="measurement">
+        select * from measurement;
+    </select>
+    <select id="findByLicense" resultMap="measurement">
+        select * from measurement where 车牌号码 = #{Lisence,jdbcType=VARCHAR} ;
+    </select>
+
+    <select id="findMeasurementCountByLicense" resultType="java.lang.Integer">
+        select count(*) as num from measurement where 车牌号码 = #{License,jdbcType=VARCHAR};
+    </select>
+    <select id="findNearestMeasurementByLicense" resultMap="measurement">
+        select * from measurement where 车牌号码 = #{License,jdbcType=VARCHAR} order by
+    </select>
+</mapper>

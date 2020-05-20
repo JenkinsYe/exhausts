@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.csdn.xs.exhausts.mapper.ResultMapper">
+    <resultMap id="result" type="com.csdn.xs.exhausts.domain.ResultDomain">
+        <result column="JYBH" property="measureID" javaType="String" jdbcType="VARCHAR"/>
+        <result column="HPHM" property="licenseCard" javaType="String" jdbcType="VARCHAR"/>
+        <result column="HPZL" property="licenseType" javaType="String" jdbcType="VARCHAR"/>
+        <result column="CLSBDH" property="recognizeCode" javaType="String" jdbcType="VARCHAR"/>
+        <result column="CLXH" property="registerType" javaType="String" jdbcType="VARCHAR"/>
+        <result column="XZQH" property="registerAddress" javaType="String" jdbcType="VARCHAR"/>
+        <result column="CCDJRQ" property="registerDate" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        <result column="RLZL" property="fuelType" javaType="java.lang.Character" jdbcType="CHAR"/>
+        <result column="PDJD" property="dischargeStandard" javaType="String" jdbcType="VARCHAR"/>
+        <result column="FDJPL" property="engineDischarge" javaType="Double" jdbcType="DECIMAL"/>
+        <result column="XSLCS" property="totalDistance" javaType="Double" jdbcType="DECIMAL"/>
+        <result column="SXKSSJ" property="measureDate" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        <result column="JCFF" property="measureMethod" javaType="String" jdbcType="VARCHAR"/>
+        <result column="ZZL" property="weight" javaType="Integer" jdbcType="DECIMAL"/>
+        <result column="MDCLSBMC" property="mdclsbmc" javaType="String" jdbcType="VARCHAR"/>
+        <result column="MDCLSBLX" property="mdclsblx" javaType="String" jdbcType="VARCHAR"/>
+        <result column="VAL01"  property="hc" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="VAL02" property="co" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="VAL03" property="no" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="SXJGPD" property="result" javaType="Integer" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="result">
+        select * from result;
+    </select>
+
+    <select id="findResultById" resultMap="result">
+        select * from result where JYBH=#{id,jdbcType=VARCHAR} ;
+    </select>
+
+    <select id="findResultByLicense" resultMap="result">
+        select * from result where HPHM = #{license,jdbcType=VARCHAR} order by ZZL asc ;
+    </select>
+    <select id="findResultByCode" resultMap="result">
+        select * from result where CLSBDH = #{code,jdbcType=VARCHAR} ;
+    </select>
+
+    <select id="findResultCountByCode" resultType="java.lang.Integer">
+        select count(*) as num from result where  CLSBDH = #{code,jdbcType=VARCHAR} ;
+    </select>
+
+
+</mapper>

@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.csdn.xs.exhausts.mapper.ConstantMapper">
+    <select id="findLastFinalRemoteSenseId" resultType="java.lang.Long">
+        select remoteID from constant limit 1;
+    </select>
+
+    <update id="updateRemoteSenseId">
+        update constant set remoteID = #{id,jdbcType=BIGINT} ;
+    </update>
+
+    <select id="findLastFinalOptimizeId" resultType="java.lang.Long">
+        select optimizeID from constant limit 1;
+    </select>
+
+    <update id="updateOptimizeId">
+        update constant set optimizeID = #{id,jdbcType=BIGINT} ;
+    </update>
+</mapper>

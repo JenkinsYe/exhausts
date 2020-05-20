@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.csdn.xs.exhausts.mapper.RemoteSenseMapper">
+    <resultMap id="remoteSense" type="com.csdn.xs.exhausts.domain.RemoteSenseDomain">
+        <result column="状态" property="state" javaType="String" jdbcType="VARCHAR"/>
+        <result column="通过时间" property="passTime"  javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        <result column="车牌" property="licensePlate" javaType="String" jdbcType="VARCHAR"/>
+        <result column="颜色" property="color" javaType="String" jdbcType="VARCHAR"/>
+        <result column="CO浓度" property="co" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="CO2浓度" property="co2" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="NO浓度" property="no" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="HC浓度" property="hc" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="林格曼黑度" property="ringelmanBlack" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="K值" property="kValue" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="不透光度" property="opacity" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="平均不透光度" property="averageOpacity" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="VSP" property="vsp" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="速度" property="velocity" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="加速度" property="acceleration" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="车牌置信度" property="credence" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="风速" property="windVelocity" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="风向" property="windDirection" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="温度" property="temperature" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="湿度" property="humidity" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="气压" property="airPressure" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="设备" property="fixture" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="监测点" property="monitorPoint" javaType="String" jdbcType="VARCHAR"/>
+        <result column="柴油车" property="diselCars" javaType="String" jdbcType="VARCHAR"/>
+        <result column="图片url" property="imageUrl" javaType="String" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="remoteSense">
+        select * from remote_sense;
+    </select>
+
+    <select id="findTodayRemoteSense" resultMap="remoteSense">
+        select * from remote_sense where to_days(通过时间) = to_days(now());
+    </select>
+
+    <select id="findRemoteSenseHoursAgo" resultMap="remoteSense">
+        select * from remote_sense where 通过时间 > SUBDATE(now(), interval #{gap,jdbcType=INTEGER} hour);
+    </select>
+
+    <insert id="insertAll" parameterType="java.util.List">
+        insert into remote_sense
+        (
+        状态,
+        通过时间,
+        车牌,
+        颜色,
+        CO浓度,
+        CO2浓度,
+        NO浓度,
+        HC浓度,
+        林格曼黑度,
+        K值,
+        不透光度,
+        平均不透光度,
+        VSP,
+        速度,
+        加速度,
+        车牌置信度,
+        风速,
+        风向,
+        温度,
+        湿度,
+        气压,
+        设备,
+        监测点,
+        柴油车,
+        图片url
+        )
+        values
+        <foreach collection="list" item="item" index = "index" separator=",">
+            (
+            #{item.state, jdbcType=VARCHAR},
+            #{item.passTime, jdbcType=TIMESTAMP},
+            #{item.licensePlate, jdbcType=VARCHAR},
+            #{item.color, jdbcType=VARCHAR},
+            #{item.co, jdbcType=DOUBLE},
+            #{item.co2, jdbcType=DOUBLE},
+            #{item.no, jdbcType=DOUBLE},
+            #{item.hc, jdbcType=DOUBLE},
+            #{item.ringelmanBlack, jdbcType=DOUBLE},
+            #{item.kValue, jdbcType=DOUBLE},
+            #{item.opacity, jdbcType=DOUBLE},
+            #{item.averageOpacity, jdbcType=DOUBLE},
+            #{item.vsp, jdbcType=DOUBLE},
+            #{item.velocity, jdbcType=DOUBLE},
+            #{item.acceleration, jdbcType=DOUBLE},
+            #{item.credence, jdbcType=INTEGER},
+            #{item.windVelocity, jdbcType=DOUBLE},
+            #{item.windDirection, jdbcType=INTEGER},
+            #{item.temperature, jdbcType=DOUBLE},
+            #{item.humidity, jdbcType=DOUBLE},
+            #{item.airPressure, jdbcType=INTEGER},
+            #{item.fixture, jdbcType=INTEGER},
+            #{item.monitorPoint, jdbcType=VARCHAR},
+            #{item.diselCars, jdbcType=VARCHAR},
+            #{item.imageUrl, jdbcType=VARCHAR}
+            )
+        </foreach>
+    </insert>
+    <select id="findRemoteSenseByLicense" resultMap="remoteSense">
+        select * from remote_sense where 车牌 = #{name,jdbcType=VARCHAR} order by 通过时间 desc ;
+    </select>
+    <insert id="insert">
+        insert into remote_sense
+        (
+        状态,
+        通过时间,
+        车牌,
+        颜色,
+        CO浓度,
+        CO2浓度,
+        NO浓度,
+        HC浓度,
+        林格曼黑度,
+        K值,
+        不透光度,
+        平均不透光度,
+        VSP,
+        速度,
+        加速度,
+        车牌置信度,
+        风速,
+        风向,
+        温度,
+        湿度,
+        气压,
+        设备,
+        监测点,
+        柴油车,
+        图片url
+        ) values
+        (
+            #{state, jdbcType=VARCHAR},
+            #{passTime, jdbcType=TIMESTAMP},
+            #{licensePlate, jdbcType=VARCHAR},
+            #{color, jdbcType=VARCHAR},
+            #{co, jdbcType=DOUBLE},
+            #{co2, jdbcType=DOUBLE},
+            #{no, jdbcType=DOUBLE},
+            #{hc, jdbcType=DOUBLE},
+            #{ringelmanBlack, jdbcType=DOUBLE},
+            #{kValue, jdbcType=DOUBLE},
+            #{opacity, jdbcType=DOUBLE},
+            #{averageOpacity, jdbcType=DOUBLE},
+            #{vsp, jdbcType=DOUBLE},
+            #{velocity, jdbcType=DOUBLE},
+            #{acceleration, jdbcType=DOUBLE},
+            #{credence, jdbcType=INTEGER},
+            #{windVelocity, jdbcType=DOUBLE},
+            #{windDirection, jdbcType=INTEGER},
+            #{temperature, jdbcType=DOUBLE},
+            #{humidity, jdbcType=DOUBLE},
+            #{airPressure, jdbcType=INTEGER},
+            #{fixture, jdbcType=INTEGER},
+            #{monitorPoint, jdbcType=VARCHAR},
+            #{diselCars, jdbcType=VARCHAR},
+            #{imageUrl, jdbcType=VARCHAR}
+        )
+    </insert>
+    <select id="findRemoteSenseByLicenseAndColor" resultMap="remoteSense">
+      select * from remote_sense where 车牌 = #{name,jdbcType=VARCHAR} and 颜色 = #{color,jdbcType=VARCHAR} ;
+    </select>
+    <select id="findNewestRemoteSenseByFixture" resultMap="remoteSense">
+      select * from remote_sense where 设备 = #{fixture,jdbcType=INTEGER} order by id desc limit 1;
+    </select>
+    <select id="findNumberToday" resultType="java.lang.Integer">
+      select count(*) as num from remote_sense where 监测点 = #{location,jdbcType=VARCHAR} and to_days(通过时间) = to_days(now());
+    </select>
+    <select id="findRemoteSenseById" resultMap="remoteSense">
+      select * from remote_sense where id = #{id,jdbcType=BIGINT}
+    </select>
+    <select id="findRemoteByTimeInternal" resultMap="remoteSense">
+        select * from remote_sense where 通过时间 between #{t1,jdbcType=TIMESTAMP} and #{t2,jdbcType=TIMESTAMP};
+    </select>
+
+    <select id="findRemoteSenseAfterID" resultMap="remoteSense">
+        select * from remote_sense where id > #{id,jdbcType=BIGINT} ;
+    </select>
+
+    <select id="findNewestRemoteSense" resultMap="remoteSense">
+        select * from remote_sense order by id desc limit 1;
+    </select>
+    <select id="findRemoteSenseAfterIDWithUpperBound" resultMap="remoteSense">
+        select * from remote_sense where id > #{id,jdbcType=BIGINT} limit 100;
+    </select>
+
+
+</mapper>

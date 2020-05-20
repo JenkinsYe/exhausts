@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.csdn.xs.exhausts.mapper.AssessmentMapper">
+    <resultMap id="assessment" type="com.csdn.xs.exhausts.domain.AssessmentDomain">
+        <result column="车牌号码" property="licensePlate" javaType="String" jdbcType="VARCHAR"/>
+        <result column="评价时间" property="assessTime" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        <result column="量化指标" property="vei" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="评价结果" property="result" javaType="String" jdbcType="VARCHAR"/>
+        <result column="遥测次数" property="numberOfRemoteSense" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="年检次数" property="numberOfMeasurement" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="CO浓度" property="co" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="NO浓度" property="no" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="HC浓度" property="hc" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="车牌种类" property="licenseType" javaType="String" jdbcType="VARCHAR"/>
+        <result column="单一识别码" property="recognizeCode" javaType="String" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="assessment">
+        select  * from assessment;
+    </select>
+
+    <insert id="insertAll" parameterType="java.util.List">
+        insert into assessment
+        (
+        车牌号码,
+        评价时间,
+        量化指标,
+        评价结果,
+        遥测次数,
+        年检次数,
+        CO浓度,
+        NO浓度,
+        HC浓度,
+        车牌种类,
+        单一识别码,
+        距离下一次年检天数
+        )
+        values
+        <foreach collection="list" item="item" index="index" separator=",">
+            (
+            #{item.licensePlate, jdbcType=VARCHAR},
+            #{item.assessTime, jdbcType=TIMESTAMP},
+            #{item.vei, jdbcType=DOUBLE},
+            #{item.result, jdbcType=VARCHAR},
+            #{item.numberOfRemoteSense, jdbcType=INTEGER},
+            #{item.numberOfMeasurement, jdbcType=INTEGER},
+            #{item.co, jdbcType=INTEGER},
+            #{item.no, jdbcType=INTEGER},
+            #{item.hc, jdbcType=INTEGER},
+            #{item.licenseType,jdbcType=VARCHAR} ,
+            #{item.recognizeCode,jdbcType=VARCHAR} ,
+            #{item.nextMeasure, jdbcType=INTEGER}
+            )
+        </foreach>
+    </insert>
+    <select id="findByTimeInternal" resultMap="assessment">
+        select * from assessment where 评价时间 between #{t1,jdbcType=TIMESTAMP} and #{t2,jdbcType=TIMESTAMP};
+    </select>
+    <select id="findAssessmentByLicense" resultMap="assessment">
+        select * from assessment where 车牌号码 = #{license,jdbcType=VARCHAR}
+    </select>
+</mapper>

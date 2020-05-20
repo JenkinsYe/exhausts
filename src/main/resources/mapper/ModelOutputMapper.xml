@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.csdn.xs.exhausts.mapper.ModelOutputMapper">
+    <resultMap id="modelOutput" type="com.csdn.xs.exhausts.domain.ModelOutputDomain">
+        <result column="车牌" property="licensePlate" javaType="String" jdbcType="VARCHAR"/>
+        <result column="遥测时间" property="remoteSenseTime" javaType="java.sql.Timestamp" jdbcType="TIMESTAMP"/>
+        <result column="设备" property="fixture" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="HC浓度" property="hc" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="SO2浓度" property="so2" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="NO浓度" property="no" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="PM10浓度" property="pm10" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="PM2.5浓度" property="pm2p5" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="CO浓度" property="co" javaType="Double" jdbcType="DOUBLE"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="modelOutput">
+        select * from model_output;
+    </select>
+</mapper>
