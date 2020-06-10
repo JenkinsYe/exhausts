@@ -36,7 +36,7 @@
     </select>
 
     <select id="findResultByLicense" resultMap="result">
-        select * from result where HPHM = #{license,jdbcType=VARCHAR} order by ZZL asc ;
+        select * from result where HPHM = #{license,jdbcType=VARCHAR} order by ZZL desc ;
     </select>
     <select id="findResultByCode" resultMap="result">
         select * from result where CLSBDH = #{code,jdbcType=VARCHAR} ;

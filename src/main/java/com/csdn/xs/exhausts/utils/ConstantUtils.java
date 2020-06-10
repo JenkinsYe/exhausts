@@ -12,6 +12,8 @@ public class ConstantUtils {
 
     public static final String IMG_PATH = "/root/imgs";
 
+    public static final String IMG_VDB_PATH = "/imgs_vdb";
+
     /** 新城路地点信息 两台设备编号: 19116和19108*/
     private static final LocationDomain location1 = new LocationDomain(120.305313d, 30.184383d,
             "浙江省杭州市萧山区新城路");

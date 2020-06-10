@@ -40,4 +40,6 @@ public interface RemoteSenseMapper {
     List<RemoteSenseDomain> findRemoteSenseAfterID(@Param("id") Long id);
 
     List<RemoteSenseDomain> findRemoteSenseAfterIDWithUpperBound(@Param("id") Long id);
+
+    List<Integer> findDistictFixture();
 }

@@ -13,6 +13,7 @@ import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -375,6 +376,16 @@ public class DataService {
         try {
             remoteSenseMapper = sqlSession.getMapper(RemoteSenseMapper.class);
             return remoteSenseMapper.findRemoteSenseAfterIDWithUpperBound(id);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public List<Integer> findFixtureList()  {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            remoteSenseMapper = sqlSession.getMapper(RemoteSenseMapper.class);
+            return remoteSenseMapper.findDistictFixture();
         } finally {
             sqlSession.close();
         }

@@ -2,6 +2,7 @@ package com.csdn.xs.exhausts.utils;
 
 import java.sql.Timestamp;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -70,5 +71,11 @@ public class DateUtils {
         if (date.getTime() < System.currentTimeMillis())
             return true;
         return false;
+    }
+
+    public static Timestamp dateStringToTimestamp(String time) throws ParseException {
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
+        Date date = df.parse(time);
+        return new java.sql.Timestamp(date.getTime());
     }
 }

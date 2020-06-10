@@ -1,4 +1,4 @@
-package com.csdn.xs.exhausts.shcedule;
+package com.csdn.xs.exhausts.schedule;
 
 import com.csdn.xs.exhausts.service.AutomationService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,7 +31,7 @@ public class ScheduleConfig {
 
     }
 
-    @Scheduled(cron = "0 0 0 0/2 * ?")
+    //@Scheduled(cron = "0 0 0 0/2 * ?")
     public void autoAssessProcess() {
         log.info("---------------------------");
         log.info("New Automation Assess Work Start");

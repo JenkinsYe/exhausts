@@ -3,6 +3,8 @@ package com.csdn.xs.exhausts.utils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
+import java.sql.Timestamp;
+import java.util.Date;
 
 /**
  * @author YJJ
@@ -11,8 +13,12 @@ import java.io.*;
 public class FileUtils {
 
     public static String saveImg(MultipartFile multipartFile) throws IOException {
-        String savePath = ConstantUtils.IMG_PATH + "/" + multipartFile.getOriginalFilename();
-        File file = new File(savePath);
+        String savePath = ConstantUtils.IMG_VDB_PATH + "/" + DateUtils.dateToStr(new Timestamp(new Date().getTime()), "yyyy-MM-dd");
+        File fileDirectory = new File(savePath);
+        if (!fileDirectory.exists()) {
+            fileDirectory.mkdirs();
+        }
+        savePath = savePath + "/" + multipartFile.getOriginalFilename();
         FileInputStream inputStream = (FileInputStream) multipartFile.getInputStream();
         BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(savePath));
         byte[] bs = new byte[1024];
@@ -25,4 +31,6 @@ public class FileUtils {
         outputStream.close();
         return savePath;
     }
+
+
 }

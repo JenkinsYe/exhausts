@@ -191,5 +191,9 @@
         select * from remote_sense where id > #{id,jdbcType=BIGINT} limit 100;
     </select>
 
+    <select id="findDistictFixture" resultType="java.lang.Integer">
+        select distinct 设备 from remote_sense
+    </select>
+
 
 </mapper>
