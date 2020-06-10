@@ -1,4 +1,4 @@
-package com.csdn.xs.exhausts.Response;
+package com.csdn.xs.exhausts.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

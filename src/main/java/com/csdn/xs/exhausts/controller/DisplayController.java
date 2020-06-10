@@ -1,6 +1,6 @@
 package com.csdn.xs.exhausts.controller;
 
-import com.csdn.xs.exhausts.Response.*;
+import com.csdn.xs.exhausts.response.*;
 import com.csdn.xs.exhausts.domain.*;
 import com.csdn.xs.exhausts.service.DataService;
 import com.csdn.xs.exhausts.utils.ConstantUtils;
@@ -37,6 +37,9 @@ public class DisplayController {
     @GetMapping("/api/nameList")
     public Result getNameList(@RequestParam("start") String startString, @RequestParam("end") String endString, @RequestParam(value = "amount", required = false) Integer amount) {
         log.info("免检名单请求: " + "开始: " + startString + " end: " + endString + " amount: " + amount);
+        if (amount == null) {
+            amount = 10;
+        }
         Result result = new Result();
         Timestamp start;
         Timestamp end;

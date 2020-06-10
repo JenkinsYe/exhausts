@@ -1,8 +1,8 @@
 package com.csdn.xs.exhausts.controller;
 
-import com.csdn.xs.exhausts.Response.DynamicDetailRemoteSenseResponse;
-import com.csdn.xs.exhausts.Response.RemoteSenseSaveResponse;
-import com.csdn.xs.exhausts.Response.Result;
+import com.csdn.xs.exhausts.response.DynamicDetailRemoteSenseResponse;
+import com.csdn.xs.exhausts.response.RemoteSenseSaveResponse;
+import com.csdn.xs.exhausts.response.Result;
 import com.csdn.xs.exhausts.domain.RemoteSenseDomain;
 import com.csdn.xs.exhausts.service.DataService;
 import com.csdn.xs.exhausts.utils.ConstantUtils;

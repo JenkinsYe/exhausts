@@ -1,4 +1,4 @@
-package com.csdn.xs.exhausts.Response;
+package com.csdn.xs.exhausts.response;
 
 import com.csdn.xs.exhausts.domain.LocationDomain;
 import lombok.AllArgsConstructor;
