@@ -1,9 +1,6 @@
 package com.csdn.xs.exhausts.service;
 
-import com.csdn.xs.exhausts.domain.InternalDomain;
-import com.csdn.xs.exhausts.domain.OptimizationDomain;
-import com.csdn.xs.exhausts.domain.RemoteSenseDomain;
-import com.csdn.xs.exhausts.domain.ResultDomain;
+import com.csdn.xs.exhausts.domain.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,12 +22,73 @@ public class OptimizeService {
     @Autowired
     private DataService dataService;
 
+    @Autowired
+    private AssessService assessService;
+
+    private static Long XGB_ID = 0l;
+
     private List<InternalDomain> internals;
 
     @PostConstruct
     public void init() {
+
         internals = dataService.findAllInternal();
+        XGB_ID = dataService.findLastXGBID();
     }
+
+
+
+    public void startService() {
+        log.info("开始计算优化结果VEI值");
+        List<XGBResultDomain> domains = dataService.findXGBRESAfterID(XGB_ID);
+        log.info("当前最后XGB_ID: " + XGB_ID);
+        XGB_ID = domains.get(domains.size()-1).getId();
+        dataService.updateXGBID(XGB_ID);
+        log.info("最后XGB_ID更新为: " + XGB_ID);
+
+
+
+        for (int i = 0; i < domains.size(); i++) {
+            log.info("no. " + i);
+            Case veiCase = getCaseID(domains.get(i));
+            XGBResultDomain domain = domains.get(i);
+            Double we;
+            Double cco = domain.getCCO();
+            Double nno = domain.getCNO();
+            Double hhc = domain.getCHC();
+            double v = (cco / 0.6 + nno / 700 + hhc / 80) * (1 / 3);
+            if ((cco > 0.2 && cco < 0.3) || (nno > 50 && nno < 100) || (hhc > 15 && hhc < 35)) {
+                we = 0.33 - v;
+            } else if ((cco >= 0.3) || (nno >= 100) || (hhc >= 35)) {
+                we = 0.01;
+            } else {
+                we = 1 - v;
+            }
+            if (veiCase.caseID == 1) {
+                domain.setVei(0d);
+            } else if (veiCase.caseID == 2) {
+                domain.setVei(10d);
+            } else if (veiCase.caseID == 3) {
+                domain.setVei(
+                        we + 10 + 27 * (0.25 * (1 - veiCase.coID) + 0.25 * (1 - veiCase.hcID) + 0.25 * (1 - veiCase.noID) + 0.15 * (1 - veiCase.acID) + 0.1 * (1 - veiCase.wcID))
+                );
+            } else if (veiCase.caseID == 4) {
+                domain.setVei(
+                        we + 70 + 27 * (0.25 * (1 - veiCase.coID) + 0.25 * (1 - veiCase.hcID) + 0.25 * (1 - veiCase.noID) + 0.15 * (1 - veiCase.acID) + 0.1 * (1 - veiCase.wcID))
+                );
+            } else {
+                domain.setVei(
+                        we + 40 + 27 * (0.25 * (1 - veiCase.coID) + 0.25 * (1 - veiCase.hcID) + 0.25 * (1 - veiCase.noID) + 0.15 * (1 - veiCase.acID) + 0.1 * (1 - veiCase.wcID))
+                );
+            }
+            dataService.updateXGBRes(domain);
+        }
+        log.info("VEI计算结束");
+        assessService.startService(domains);
+    }
+
+
+
 
     public void startOptimize(List<RemoteSenseDomain> domains) {
         log.info("开始优化");
@@ -97,6 +155,60 @@ public class OptimizeService {
         log.info("优化完成");
     }
 
+
+    private boolean judgePredictResult(XGBResultDomain domain) {
+        if (domain.getPredictCO() > 6 || domain.getPredictHC() > 2.5 || domain.getPredictNO() > 2.5)
+            return false;
+        return true;
+    }
+
+    private Case getCaseID(XGBResultDomain domain) {
+        if (! domain.getTestState() && ! judgePredictResult(domain)) {
+            return new Case(1);
+        }
+        if (!domain.getTestState() || !judgePredictResult(domain)) {
+            return new Case(2);
+        }
+        boolean ac, no, co, hc, wc;
+        ac = no = co = hc = wc = false;
+        Double acID, noID, coID, hcID, wcID;
+        acID =  noID = coID = hcID = wcID = 1d;
+        for (int i = 0 ; i < internals.size(); i++) {
+            InternalDomain internal = internals.get(i);
+            if (internal.getAc() > domain.getDistance() && !ac) {
+                ac = true;
+                acID = internals.get(i-1).getId();
+            }
+            if (internal.getCo() > domain.getVelCO() && !co) {
+                co = true;
+                coID = internals.get(i-1).getId();
+            }
+            if (internal.getNo() > domain.getVelNO() && !no) {
+                no = true;
+                noID = internals.get(i-1).getId();
+            }
+            if (internal.getHc() > domain.getVelHC() && !hc) {
+                hc = true;
+                hcID = internals.get(i-1).getId();
+            }
+            if (internal.getWe() > domain.getWeight() && !wc) {
+                wc = true;
+                wcID = internals.get(i-1).getId();
+            }
+            if (ac && no && co && hc && wc)
+                break;
+        }
+        if (acID > 0.5 && noID > 0.5 && coID > 0.5 && hcID > 0.5 && wcID > 0.5) {
+            return new Case(3, acID, noID, coID, hcID, wcID);
+        }
+        if (acID < 0.5 && noID < 0.5 && coID < 0.5 && hcID < 0.5 && wcID < 0.5) {
+            return new Case(4, acID, noID, coID, hcID, wcID);
+        }
+        return new Case(5, acID, noID, coID, hcID, wcID);
+    }
+
+
+
     private Double case2CalculateVEI(ResultDomain domain, RemoteSenseDomain remoteSenseDomain) {
         boolean ac, no, co, hc;
         ac = no = co = hc = false;
@@ -122,7 +234,7 @@ public class OptimizeService {
             if (ac && no && co && hc)
                 break;
         }
-
+/*
         Double we;
         Double cco = remoteSenseDomain.getCo();
         Double nno = remoteSenseDomain.getNo();
@@ -133,9 +245,52 @@ public class OptimizeService {
             we = 0.01;
         } else {
             we = 1 - (cco/0.6 + nno/700 + hhc/80)*(1/3);
+        } */
+
+        return 70d + 30 * result;
+    }
+/*
+    public Double newCalculateVEI(XGBResultDomain domain) {
+        boolean ac, no, co, hc;
+        ac = no = co = hc = false;
+        Double result = 0d;
+        for (int i = 0 ; i < internals.size(); i++) {
+            InternalDomain internal = internals.get(i);
+            if (internal.getAc() > domain.getDistance() && !ac) {
+                ac = true;
+                result += 0.25 * (1 - internals.get(i-1).getId()/0.5);
+            }
+            if (internal.getCo() > domain.getVelCO() && !co) {
+                co = true;
+                result += 0.25 * (1 - internals.get(i-1).getId()/0.4);
+            }
+            if (internal.getNo() > domain.getVelNO() && !no) {
+                no = true;
+                result += 0.25 * (1 - internals.get(i-1).getId()/0.4);
+            }
+            if (internal.getHc() > domain.getVelHC() && !hc) {
+                hc = true;
+                result += 0.25 * (1 - internals.get(i-1).getId()/0.4);
+            }
+            if (ac && no && co && hc)
+                break;
         }
+
+        Double we;
+        Double cco = domain.getCCO();
+        Double nno = domain.getCNO();
+        Double hhc = domain.getCHC();
+        if ((cco > 0.2 && cco < 0.3) || (nno > 50 && nno < 100) || (hhc > 15 && hhc < 35)) {
+            we = 0.33 - (cco/0.6 + nno/700 + hhc/80)*(1/3);
+        } else if ((cco >= 0.3) || (nno >= 100) || (hhc >= 35)) {
+            we = 0.01;
+        } else {
+            we = 1 - (cco/0.6 + nno/700 + hhc/80)*(1/3);
+        }
+
         return 70d + 30 * result + we;
     }
+*/
 
     private boolean case1(ResultDomain domain) {
         Double ac = domain.getTotalDistance();
@@ -159,4 +314,22 @@ public class OptimizeService {
         return false;
     }
 
+    private class Case {
+        public int caseID;
+
+        public Double acID, noID, coID, hcID, wcID;
+
+        Case(int caseID) {
+            this.caseID = caseID;
+        }
+
+        Case(int caseID, Double acID, Double noID, Double coID, Double hcID, Double wcID) {
+            this.caseID = caseID;
+            this.acID = acID;
+            this.coID = coID;
+            this.noID = noID;
+            this.hcID = hcID;
+            this.wcID = wcID;
+        }
+    }
 }

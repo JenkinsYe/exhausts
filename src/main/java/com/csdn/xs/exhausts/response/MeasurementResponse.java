@@ -13,6 +13,7 @@ import java.sql.Timestamp;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@Deprecated
 public class MeasurementResponse {
 
     private String license;

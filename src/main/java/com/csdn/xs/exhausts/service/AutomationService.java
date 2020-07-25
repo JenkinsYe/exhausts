@@ -174,12 +174,8 @@ public class AutomationService {
             cr3++;
             return false;
         }
-        if (domain.getHumidity() > 85) {
+        if (domain.getHumidity() > 95) {
             cr4++;
-            return false;
-        }
-        if (domain.getAirPressure() < 700) {
-            cr5++;
             return false;
         }
         if (domain.getCredence() < 85) {

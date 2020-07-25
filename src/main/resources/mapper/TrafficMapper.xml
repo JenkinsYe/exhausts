@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.csdn.xs.exhausts.mapper.TrafficMapper">
+    <resultMap id="traffic" type="com.csdn.xs.exhausts.domain.TrafficDomain">
+        <result column="通道名" property="channelName" jdbcType="VARCHAR" javaType="String"/>
+        <result column="通道编号" property="channelID" jdbcType="VARCHAR" javaType="String"/>
+        <result column="统计时间" property="time" jdbcType="DATE" javaType="java.util.Date"/>
+        <result column="车流量" property="flow" jdbcType="INTEGER" javaType="Integer"/>
+        <result column="类型数量" property="flowString" jdbcType="VARCHAR" javaType="String"/>
+    </resultMap>
+
+
+    <select id="getFlowByTimeInternalAndChannelIDAndVehicleType" resultType="java.lang.Integer">
+        SELECT COUNT(*) as num FROM dwd_bayonet_passvhc_detail_to_zhhb WHERE
+        CHANNEL_ID = #{channelID,jdbcType=VARCHAR}  AND VHCPLATE_TYPE = #{vehicleType,jdbcType=VARCHAR}
+        AND CURR_TIME BETWEEN #{start,jdbcType=TIMESTAMP}  AND #{end,jdbcType=TIMESTAMP}
+    </select>
+    <select id="findTrafficByTimeString" resultMap="traffic">
+        SELECT * FROM statistics WHERE DATE_FORMAT(统计时间,"%Y-%m-%d %H") = #{timeString,jdbcType=VARCHAR}
+    </select>
+
+
+</mapper>

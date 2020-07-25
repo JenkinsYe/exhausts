@@ -2,14 +2,13 @@
 <!DOCTYPE configuration
         PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
         "http://mybatis.org/dtd/mybatis-3-config.dtd">
-
 <configuration>
     <environments default="mysql">
         <environment id="mysql">
             <transactionManager type="JDBC"></transactionManager>
             <dataSource type="POOLED">
                 <property name="driver" value="com.mysql.cj.jdbc.Driver"></property>
-                <property name="url" value="jdbc:mysql://10.71.146.189:3306/data?useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=Asia/Shanghai"></property>
+                <property name="url" value="jdbc:mysql://195.195.9.189:3306/traffic_data?useUnicode=true&amp;characterEncoding=UTF-8&amp;serverTimezone=Asia/Shanghai"></property>
                 <property name="username" value="wq123456"></property>
                 <property name="password" value="ZJU123456"></property>
 
@@ -22,16 +21,6 @@
     </environments>
 
     <mappers>
-        <mapper resource="mapper/RemoteSenseMapper.xml"></mapper>
-        <mapper resource="mapper/ModelOutputMapper.xml"></mapper>
-        <mapper resource="mapper/OptimizationMapper.xml"></mapper>
-        <mapper resource="mapper/AssessmentMapper.xml"></mapper>
-        <mapper resource="mapper/MeasurementMapper.xml"></mapper>
-        <mapper resource="mapper/ProcessMapper.xml"></mapper>
-        <mapper resource="mapper/ResultMapper.xml"></mapper>
-        <mapper resource="mapper/InternalMapper.xml"></mapper>
-        <mapper resource="mapper/ConstantMapper.xml"></mapper>
-        <mapper resource="mapper/XGBResultMapper.xml"></mapper>
-        <mapper resource="mapper/StatisticMapper.xml"></mapper>
+        <mapper resource="mapper/TrafficMapper.xml"></mapper>
     </mappers>
 </configuration>

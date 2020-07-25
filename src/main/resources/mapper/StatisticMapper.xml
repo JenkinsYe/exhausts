@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.csdn.xs.exhausts.mapper.StatisticMapper">
+    <resultMap id="statistic" type="com.csdn.xs.exhausts.domain.StatisticDomain">
+        <result column="名单期数" property="nameListVersion" javaType="Long" jdbcType="BIGINT"/>
+        <result column="wc_no" property="wcNO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="wc_co" property="wcCO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="wc_hc" property="wcHC" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="c_no" property="cNO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="c_co" property="cCO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="c_hc" property="cHC" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="rs_no" property="rsNO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="rs_co" property="rsCO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="rs_hc" property="rsHC" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="rs_start_time" property="rsStartTime" javaType="java.util.Date" jdbcType="DATE"/>
+        <result column="rs_end_time" property="rsEndTime" javaType="java.util.Date" jdbcType="DATE"/>
+        <result column="wc_rate" property="wcRate" javaType="Double" jdbcType="DOUBLE"/>
+    </resultMap>
+
+    <select id="findNewestStatistic" resultMap="statistic">
+        select * from statistics order by id desc limit 1
+    </select>
+
+    <select id="findStatisticByVersion" resultMap="statistic">
+        select  *  from statistics where 名单期数 = #{version,jdbcType=BIGINT}
+    </select>
+
+    <insert id="saveStatistic">
+        INSERT INTO statistics(名单期数, wc_no, wc_co, wc_hc, c_no, c_co, c_hc,
+         rs_no, rs_co, rs_hc, rs_start_time, rs_end_time, wc_rate) VALUES (
+          #{nameListVersion,jdbcType=BIGINT},
+          #{wcNO,jdbcType=DOUBLE} ,
+          #{wcCO,jdbcType=DOUBLE} ,
+          #{wcHC,jdbcType=DOUBLE} ,
+          #{cNO,jdbcType=DOUBLE} ,
+          #{cCO,jdbcType=DOUBLE} ,
+          #{cHC,jdbcType=DOUBLE} ,
+          #{rsNO,jdbcType=DOUBLE} ,
+          #{rsCO,jdbcType=DOUBLE} ,
+          #{rsHC,jdbcType=DOUBLE} ,
+          #{rsStartTime,jdbcType=TIMESTAMP} ,
+          #{rsEndTime,jdbcType=TIMESTAMP} ,
+          #{wcRate,jdbcType=DOUBLE} )
+    </insert>
+</mapper>

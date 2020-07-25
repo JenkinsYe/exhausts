@@ -1,9 +1,6 @@
 package com.csdn.xs.exhausts.service;
 
-import com.csdn.xs.exhausts.domain.MeasurementDomain;
-import com.csdn.xs.exhausts.domain.OptimizationDomain;
-import com.csdn.xs.exhausts.domain.RemoteSenseDomain;
-import com.csdn.xs.exhausts.domain.ResultDomain;
+import com.csdn.xs.exhausts.domain.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Assert;
@@ -28,6 +25,9 @@ public class DataServiceTest {
     @Autowired
     private DataService dataService;
 
+    @Autowired
+    private ModelRoadDataService modelRoadDataService;
+
     @Test
     public void test() {
         List<MeasurementDomain> domainList = dataService.findMeasurementByLicense("浙AY638L");
@@ -35,6 +35,15 @@ public class DataServiceTest {
             log.info(domain.getLicensePlate());
         }
         log.info(domainList.size()+"");
+    }
+
+    @Test
+    public void modelRoadDataServiceTests(){
+        List<ModelRoadDomain> list = modelRoadDataService.findNewestModelRoad(null);
+        for (ModelRoadDomain domain : list) {
+            log.info(domain.toString());
+        }
+        log.info(list.size()+"");
     }
 
     @Test
@@ -77,5 +86,37 @@ public class DataServiceTest {
     public void getOptimizeIDTest() {
         Long id = dataService.findLastOptimizeId();
         log.info("The last optimize id is " + id);
+    }
+
+    @Test
+    public void averageTest() {
+        List<XGBResultDomain> domains = dataService.findALLXGB();
+        log.info("size " + domains.size());
+        int count1, count2;
+        Double no1, no2, hc1, hc2, co1, co2;
+        no1 = no2 = hc1 = hc2 = co1 = co2 = 0d;
+        count1 = count2 = 0;
+        int step = 0;
+        for (XGBResultDomain domain : domains) {
+            log.info("step : " + step++);
+            if (domain.getVei() >= 85) {
+                no1 += domain.getCNO();
+                co1 += domain.getCCO();
+                hc1 += domain.getCHC();
+                count1++;
+            } else {
+                no2 += domain.getCNO();
+                co2 += domain.getCCO();
+                hc2 += domain.getCHC();
+                count2++;
+            }
+        }
+        log.info("no1 :" + (no1 / count1));
+        log.info("co1 :" + (co1 / count1));
+        log.info("hc1 :" + (hc1 / count1));
+
+        log.info("no2 :" + (no2 / count2));
+        log.info("co2 :" + (co2 / count2));
+        log.info("hc2 :" + (hc2 / count2));
     }
 }

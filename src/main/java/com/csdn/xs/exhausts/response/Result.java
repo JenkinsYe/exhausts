@@ -3,6 +3,7 @@ package com.csdn.xs.exhausts.response;
 import java.util.HashMap;
 
 /**
+ * HTTP响应
  * @author YJJ
  * @Date: Created in 10:08 2020-06-10
  */
@@ -52,6 +53,12 @@ public class Result {
 
             this.code = 400l;
             this.msg = "失败";
+            return this;
+        }
+
+        public Result fail(String msg) {
+            this.code = 400l;
+            this.msg = msg;
             return this;
         }
 }

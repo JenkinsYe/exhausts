@@ -16,6 +16,8 @@
         <result column="HC浓度" property="hc" javaType="Double" jdbcType="DOUBLE"/>
         <result column="车牌种类" property="licenseType" javaType="String" jdbcType="VARCHAR"/>
         <result column="单一识别码" property="recognizeCode" javaType="String" jdbcType="VARCHAR"/>
+        <result column="距离下一次年检天数" property="nextMeasure" javaType="Integer" jdbcType="INTEGER"/>
+        <result column="免检名单期数" property="nameListVersion" javaType="Long" jdbcType="BIGINT"/>
     </resultMap>
 
     <select id="findAll" resultMap="assessment">
@@ -36,7 +38,8 @@
         HC浓度,
         车牌种类,
         单一识别码,
-        距离下一次年检天数
+        距离下一次年检天数,
+        免检名单期数
         )
         values
         <foreach collection="list" item="item" index="index" separator=",">
@@ -52,7 +55,8 @@
             #{item.hc, jdbcType=INTEGER},
             #{item.licenseType,jdbcType=VARCHAR} ,
             #{item.recognizeCode,jdbcType=VARCHAR} ,
-            #{item.nextMeasure, jdbcType=INTEGER}
+            #{item.nextMeasure, jdbcType=INTEGER} ,
+            #{item.nameListVersion, jdbcType=BIGINT}
             )
         </foreach>
     </insert>
@@ -61,5 +65,15 @@
     </select>
     <select id="findAssessmentByLicense" resultMap="assessment">
         select * from assessment where 车牌号码 = #{license,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findTotalWithoutCheckingVehicles" resultType="java.lang.Integer">
+        select count(*) as num from assessment where 评价结果 = '免检';
+    </select>
+    <select id="findAssessmentByVersion" resultMap="assessment">
+        select * from assessment where 评价结果 = '免检' and 免检名单期数=#{version,jdbcType=BIGINT} limit #{offset,jdbcType=INTEGER} , #{size,jdbcType=INTEGER}
+    </select>
+    <select id="findWithoutCheckingVehiclesNumberByVersion" resultType="java.lang.Integer">
+        select count(*) as num from assessment where 评价结果 = '免检' and 免检名单期数=#{version,jdbcType=BIGINT}
     </select>
 </mapper>

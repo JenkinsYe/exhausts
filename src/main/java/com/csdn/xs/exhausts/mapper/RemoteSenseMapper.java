@@ -5,6 +5,7 @@ import com.csdn.xs.exhausts.domain.RemoteSenseDomain;
 import org.apache.ibatis.annotations.Param;
 
 import java.sql.Timestamp;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -27,6 +28,8 @@ public interface RemoteSenseMapper {
 
     List<RemoteSenseDomain> findRemoteSenseByLicenseAndColor(@Param("name") String license,@Param("color") String color);
 
+    List<RemoteSenseDomain> findRemoteSenseByFixture(@Param("fixture") Integer fixture);
+
     List<RemoteSenseDomain> findNewestRemoteSenseByFixture(@Param("fixture") Integer fixture);
 
     List<RemoteSenseDomain> findNewestRemoteSense();
@@ -42,4 +45,8 @@ public interface RemoteSenseMapper {
     List<RemoteSenseDomain> findRemoteSenseAfterIDWithUpperBound(@Param("id") Long id);
 
     List<Integer> findDistictFixture();
+
+    Integer findPassStateCountByTimeInternalAndFixture(@Param("start") Date start, @Param("end") Date end, @Param("fixture") Integer fixture);
+
+    Integer findUnPassStateCountByTimeInternalAndFixture(@Param("start") Date start, @Param("end") Date end, @Param("fixture") Integer fixture);
 }

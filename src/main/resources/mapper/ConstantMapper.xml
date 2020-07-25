@@ -19,4 +19,22 @@
     <update id="updateOptimizeId">
         update constant set optimizeID = #{id,jdbcType=BIGINT} ;
     </update>
+
+    <select id="findLastFinalXGBID" resultType="java.lang.Long">
+        select xgbID from constant limit 1;
+    </select>
+
+    <update id="updateLastFinalXGBID">
+        update  constant set xgbID = #{id,jdbcType=BIGINT}
+    </update>
+
+    <select id="findLastNameListVersion" resultType="java.lang.Long">
+        select nameListID from constant limit 1;
+    </select>
+
+    <update id="updateNameListVersion">
+        update constant set nameListID = #{version,jdbcType=BIGINT}
+    </update>
+
+
 </mapper>

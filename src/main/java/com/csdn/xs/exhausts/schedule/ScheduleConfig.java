@@ -8,6 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
 /**
+ * 定时任务调度
  * @author YJJ
  * @Date: Created in 11:01 2019-12-09
  */

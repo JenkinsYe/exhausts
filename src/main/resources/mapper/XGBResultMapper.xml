@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.csdn.xs.exhausts.mapper.XGBResultMapper">
+    <resultMap id="XGBRESULT" type="com.csdn.xs.exhausts.domain.XGBResultDomain">
+        <result column="State" property="remoteState" javaType="Boolean" jdbcType="INTEGER"/>
+        <result column="License" property="license" javaType="String" jdbcType="VARCHAR"/>
+        <result column="C_CO" property="cCO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="C_CO2" property="cCO2" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="C_NO" property="cNO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="C_HC" property="cHC" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="JYBH" property="testID" javaType="String" jdbcType="VARCHAR"/>
+        <result column="XSLCS" property="distance" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="ZZL" property="weight" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="SXJGPD" property="testState" javaType="Boolean" jdbcType="INTEGER"/>
+        <result column="VelHC" property="velHC" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="VelCO" property="velCO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="VelNO" property="velNO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="y_pred_HC" property="predictHC" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="y_pred_NO" property="predictNO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="y_pred_CO" property="predictCO" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="vei" property="vei" javaType="Double" jdbcType="DOUBLE"/>
+    </resultMap>
+
+
+    <select id="findALL" resultMap="XGBRESULT">
+        select * from xgb_res
+    </select>
+    <update id="updateVEIBYID">
+        update xgb_res set vei = #{vei,jdbcType=DOUBLE}   where  id = #{id,jdbcType=BIGINT}
+    </update>
+    <select id="findAfterID" resultMap="XGBRESULT">
+        select  * from  xgb_res where id > #{id,jdbcType=BIGINT} order by id
+    </select>
+</mapper>

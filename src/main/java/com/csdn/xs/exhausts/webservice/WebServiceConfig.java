@@ -14,6 +14,7 @@ import javax.xml.ws.Endpoint;
  * @Date: Created in 12:11 2019-12-08
  */
 @Configuration
+@Deprecated
 public class WebServiceConfig {
 
     @Bean

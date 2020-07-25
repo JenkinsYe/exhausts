@@ -13,6 +13,7 @@ import java.util.List;
  * @Date: Created in 11:02 2019-12-08
  */
 @WebService
+@Deprecated
 public class RemoteSenseUploadService {
 
     @Autowired

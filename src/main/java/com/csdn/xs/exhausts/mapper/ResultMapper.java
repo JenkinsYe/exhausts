@@ -1,8 +1,10 @@
 package com.csdn.xs.exhausts.mapper;
 
+import com.csdn.xs.exhausts.domain.MeasurementStatisticDomain;
 import com.csdn.xs.exhausts.domain.ResultDomain;
 import org.apache.ibatis.annotations.Param;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -20,4 +22,10 @@ public interface ResultMapper {
     List<ResultDomain> findResultByCode(@Param("code") String code);
 
     Integer findResultCountByCode(@Param("code") String code);
+
+    MeasurementStatisticDomain findResultCountByDistanceInternal(@Param("start") Long start, @Param("end") Long end);
+
+    Integer findResultCountByMeasurementDateInternal(@Param("start")Date start, @Param("end") Date end);
+
+    MeasurementStatisticDomain findResultCountByYear(@Param("year1") int year1, @Param("year2") int year2);
 }

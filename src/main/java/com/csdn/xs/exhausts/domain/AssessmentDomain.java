@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 /**
+ * 评价结果实体类
  * @author YJJ
  * @Date: Created in 17:58 2019-12-07
  */
@@ -40,4 +41,6 @@ public class AssessmentDomain {
     private String recognizeCode;
 
     private Integer nextMeasure;
+
+    private Long nameListVersion;
 }

@@ -15,4 +15,12 @@ public interface ConstantMapper {
     Long findLastFinalOptimizeId();
 
     void updateOptimizeId(@Param("id") Long id);
+
+    Long  findLastFinalXGBID();
+
+    void updateLastFinalXGBID(@Param("id") Long id);
+
+    Long findLastNameListVersion();
+
+    void updateNameListVersion(@Param("version") Long version);
 }

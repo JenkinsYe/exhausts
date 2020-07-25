@@ -14,9 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 /**
+ * 数据库访问服务
  * @author YJJ
  * @Date: Created in 16:46 2019-12-07
  */
@@ -112,6 +114,17 @@ public class DataService {
         try {
             assessmentMapper = sqlSession.getMapper(AssessmentMapper.class);
             return assessmentMapper.findByTimeInternal(t1, t2);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public List<AssessmentDomain> findAssessmentByVersion(Long version, Integer pageNum, Integer pageSize) {
+        SqlSession sqlSession;
+        sqlSession = factory.openSession(true);
+        try {
+            assessmentMapper = sqlSession.getMapper(AssessmentMapper.class);
+            return assessmentMapper.findAssessmentByVersion(version, pageNum*pageSize, pageSize);
         } finally {
             sqlSession.close();
         }
@@ -315,12 +328,36 @@ public class DataService {
 
     }
 
+
+
     public void updateRemoteSenseId(Long id) {
         SqlSession sqlSession;
         sqlSession = factory.openSession(true);
         try {
             constantMapper = sqlSession.getMapper(ConstantMapper.class);
             constantMapper.updateRemoteSenseId(id);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public Long findLastXGBID() {
+        SqlSession sqlSession;
+        sqlSession = factory.openSession(true);
+        try {
+            constantMapper = sqlSession.getMapper(ConstantMapper.class);
+            return constantMapper.findLastFinalXGBID();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public void updateXGBID(Long id) {
+        SqlSession sqlSession;
+        sqlSession = factory.openSession(true);
+        try {
+            constantMapper = sqlSession.getMapper(ConstantMapper.class);
+            constantMapper.updateLastFinalXGBID(id);
         } finally {
             sqlSession.close();
         }
@@ -386,6 +423,172 @@ public class DataService {
         try {
             remoteSenseMapper = sqlSession.getMapper(RemoteSenseMapper.class);
             return remoteSenseMapper.findDistictFixture();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public List<XGBResultDomain> findALLXGB() {
+        SqlSession sqlSession = factory.openSession(true);
+
+        try {
+            XGBResultMapper mapper = sqlSession.getMapper(XGBResultMapper.class);
+
+            return mapper.findALL();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public void updateXGBRes(XGBResultDomain domain) {
+        SqlSession sqlSession = factory.openSession(true);
+
+        try {
+            XGBResultMapper mapper = sqlSession.getMapper(XGBResultMapper.class);
+
+            mapper.updateVEIBYID(domain);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public List<XGBResultDomain> findXGBRESAfterID(Long xgbId) {
+        SqlSession sqlSession = factory.openSession(true);
+
+        try {
+            XGBResultMapper mapper = sqlSession.getMapper(XGBResultMapper.class);
+
+            return mapper.findAfterID(xgbId);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public Long getNewestNameListVersion() {
+        SqlSession sqlSession = factory.openSession(true);
+
+        try {
+            ConstantMapper mapper = sqlSession.getMapper(ConstantMapper.class);
+
+            return mapper.findLastNameListVersion();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public void updateNameListVersion(Long version) {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            ConstantMapper mapper = sqlSession.getMapper(ConstantMapper.class);
+
+            mapper.updateNameListVersion(version);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public StatisticDomain findNewestStatistic() {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            StatisticMapper mapper = sqlSession.getMapper(StatisticMapper.class);
+            return mapper.findNewestStatistic();
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public StatisticDomain findStatisticByVersion(Long version) {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            StatisticMapper mapper = sqlSession.getMapper(StatisticMapper.class);
+            return mapper.findStatisticByVersion(version);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public Integer findWithoutCheckingVehicleCount() {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            AssessmentMapper mapper = sqlSession.getMapper(AssessmentMapper.class);
+            return mapper.findTotalWithoutCheckingVehicles();
+        } finally {
+            sqlSession.close();
+        }
+
+    }
+
+    /**
+     * 查询时间段内某点位遥测合格数/不合格数
+     * @return
+     */
+    public Integer findRemoteSenseByTimeInternalAndFixtureAndState(Date start, Date end, Integer fixture, Boolean flag) {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            RemoteSenseMapper mapper = sqlSession.getMapper(RemoteSenseMapper.class);
+            if (flag)
+                return mapper.findPassStateCountByTimeInternalAndFixture(start, end, fixture);
+            else
+                return mapper.findUnPassStateCountByTimeInternalAndFixture(start, end, fixture);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public List<RemoteSenseDomain> findRemoteSenseByFixture(Integer fixture) {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            RemoteSenseMapper mapper = sqlSession.getMapper(RemoteSenseMapper.class);
+            return mapper.findRemoteSenseByFixture(fixture);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    /**
+     * 查询某期免检名单车辆数
+     */
+    public Integer findWithoutCheckingNumberByVersion(Long version) {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            AssessmentMapper mapper = sqlSession.getMapper(AssessmentMapper.class);
+            return mapper.findWithoutCheckingVehiclesNumberByVersion(version);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    /**
+     * 根据行驶里程区间查询年车辆数
+     */
+    public MeasurementStatisticDomain findResultCountByDistanceInternal(Long start, Long end) {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            ResultMapper mapper = sqlSession.getMapper(ResultMapper.class);
+            return mapper.findResultCountByDistanceInternal(start, end);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    /**
+     * 根据年检时间区间查询车辆数
+     */
+    public Integer findResultCountByMeasureDateInternal(Date start, Date end) {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            ResultMapper mapper = sqlSession.getMapper(ResultMapper.class);
+            return mapper.findResultCountByMeasurementDateInternal(start, end);
+        } finally {
+            sqlSession.close();
+        }
+    }
+
+    public MeasurementStatisticDomain findResultCountByYears(int year1, int year2) {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            ResultMapper mapper = sqlSession.getMapper(ResultMapper.class);
+            return mapper.findResultCountByYear(year1 , year2);
         } finally {
             sqlSession.close();
         }

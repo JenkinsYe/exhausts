@@ -19,7 +19,7 @@ public class FileUtils {
             fileDirectory.mkdirs();
         }
         savePath = savePath + "/" + multipartFile.getOriginalFilename();
-        FileInputStream inputStream = (FileInputStream) multipartFile.getInputStream();
+        InputStream inputStream = multipartFile.getInputStream();
         BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(savePath));
         byte[] bs = new byte[1024];
         int len;

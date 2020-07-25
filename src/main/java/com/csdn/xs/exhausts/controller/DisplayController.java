@@ -34,25 +34,25 @@ public class DisplayController {
     @Autowired
     private DataService dataService;
 
+    /**
+     * 按照期号查询免检名单
+     * @Param version
+     * @Param pageNum
+     * @Param pageSize
+     * @return
+     */
     @GetMapping("/api/nameList")
-    public Result getNameList(@RequestParam("start") String startString, @RequestParam("end") String endString, @RequestParam(value = "amount", required = false) Integer amount) {
-        log.info("免检名单请求: " + "开始: " + startString + " end: " + endString + " amount: " + amount);
-        if (amount == null) {
-            amount = 10;
+    public Result getNameListByTime(@RequestParam("version") Long version,
+                                    @RequestParam(value = "pageNum", required = false) Integer pageNum,
+                                    @RequestParam(value = "pageSize", required = false) Integer pageSize) {
+        log.info("免检名单查询 期号: " + version);
+        if (pageNum == null || pageSize == null) {
+            pageNum = 0;
+            pageSize = 20;
         }
         Result result = new Result();
-        Timestamp start;
-        Timestamp end;
-        try {
-            start = DateUtils.dateStringToTimestamp(startString);
-            end = DateUtils.dateStringToTimestamp(endString);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            result.fail();
-            result.setMsg("日期无法解析");
-            return result;
-        }
-        List<AssessmentDomain> domains = dataService.findAssessmentByTimeInternal(start, end);
+
+        List<AssessmentDomain> domains = dataService.findAssessmentByVersion(version, pageNum, pageSize);
         log.info("免检名单查询完毕");
         if (domains.size() == 0) {
             result.success();
@@ -99,18 +99,21 @@ public class DisplayController {
             nameResponse.setAssessNo(domain.getNo());
             nameResponse.setVei(domain.getVei());
             responseList.add(nameResponse);
-            if (responseList.size() == amount)
-                break;
         }
         HashMap<String, Object> map = new HashMap<>();
         map.put("size", responseList.size());
+        map.put("totalSize", dataService.findWithoutCheckingNumberByVersion(version));
         map.put("nameList", responseList);
         log.info("免检名单完成");
         return result.success(map);
     }
 
 
-
+    /**
+     * 根据车牌查询年检信息
+     * @param name
+     * @return
+     */
     @GetMapping("/api/measurement")
     public Result getMeasurementByLicense(@RequestParam("license") String name) {
         log.info("车检信息: " + name);
@@ -141,6 +144,11 @@ public class DisplayController {
         return result.success(map);
     }
 
+    /**
+     * 根据车牌查询评估结果
+     * @param license
+     * @return
+     */
     @GetMapping("/api/assess")
     public Result getAssess(@RequestParam("license") String license) {
         Result result = new Result();
@@ -221,6 +229,13 @@ public class DisplayController {
     }
 
 
+    /**
+     * 根据遥测信息id获取遥测图片
+     * @param id
+     * @param request
+     * @param response
+     * @return
+     */
     @GetMapping(value = "/api/remoteSense/img")
     public String downloadImage(@RequestParam("id") Long id, HttpServletRequest request, HttpServletResponse response) {
         log.info("下载图片: " + "id: " + id);

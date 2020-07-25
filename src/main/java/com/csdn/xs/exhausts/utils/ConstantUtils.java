@@ -37,4 +37,40 @@ public class ConstantUtils {
             return locationMap.get(fixture);
         return null;
     }
+
+    public static HashMap<String, Object> vehicleMap = new HashMap<String, Object>() {
+        {
+            put("0", "未知");
+            put("1", "小型汽车");
+            put("2", "大型汽车");
+            put("3", "使馆汽车");
+            put("4", "领馆汽车");
+            put("5", "境外汽车");
+            put("6", "外籍汽车");
+            put("7", "低速汽车");
+            put("8", "拖拉机");
+            put("9", "挂车");
+            put("10", "教练汽车");
+            put("11", "临时行驶车");
+            put("12", "警用汽车");
+            put("13", "警用摩托车");
+            put("14", "两、三轮摩托车");
+            put("15", "轻便摩托车");
+            put("16", "机动车");
+            put("17", "公交车");
+            put("18", "摩托车");
+            put("19", "客车");
+            put("20", "大货车");
+            put("21", "中货车");
+            put("22", "轿车");
+            put("23", "面包车");
+            put("24", "小货车");
+            put("256", "非机动车");
+            put("257", "自行车");
+            put("258", "三轮车");
+            put("512", "行人");
+            put("513", "军用车");
+            put("514", "槽罐车");
+        }
+    };
 }

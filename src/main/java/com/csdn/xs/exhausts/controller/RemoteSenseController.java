@@ -5,7 +5,9 @@ import com.csdn.xs.exhausts.response.RemoteSenseSaveResponse;
 import com.csdn.xs.exhausts.response.Result;
 import com.csdn.xs.exhausts.domain.RemoteSenseDomain;
 import com.csdn.xs.exhausts.service.DataService;
+import com.csdn.xs.exhausts.service.StatisticService;
 import com.csdn.xs.exhausts.utils.ConstantUtils;
+import com.csdn.xs.exhausts.utils.DateUtils;
 import com.csdn.xs.exhausts.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,11 +18,12 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
-;
+
 
 /**
  * @author YJJ
@@ -33,6 +36,38 @@ public class RemoteSenseController {
     @Autowired
     private DataService dataService;
 
+    @Autowired
+    private StatisticService statisticService;
+
+    /**
+     * 遥测数据上传接口
+     * @param state
+     * @param passTime
+     * @param license
+     * @param color
+     * @param co
+     * @param co2
+     * @param no
+     * @param hc
+     * @param ringelmanBlack
+     * @param kValue
+     * @param opacity
+     * @param averageOpacity
+     * @param vsp
+     * @param velocity
+     * @param acceleration
+     * @param credence
+     * @param windVelocity
+     * @param windDirection
+     * @param temperature
+     * @param humidity
+     * @param airPressure
+     * @param fixture
+     * @param monitorPoint
+     * @param diselCars
+     * @param imgData
+     * @return
+     */
     @PostMapping("/remote/upload")
     public RemoteSenseSaveResponse saveRemoteSense(
                                                    String state,
@@ -93,9 +128,14 @@ public class RemoteSenseController {
         remoteData.setDiselCars(diselCars);
 
         MultipartFile file = imgData;
+        if (file == null) {
+            response.setSuccess(true);
+            response.setMsg("成功");
+            return response;
+        }
         String contentType = file.getContentType();
         String rootFileName = file.getOriginalFilename();
-        log.info("上传图片 name:{}, type:{}", rootFileName, contentType);
+        log.info("遥测数据上传, 上传图片 name:{}, type:{}", rootFileName, contentType);
         String fileName= null;
         try {
             fileName = FileUtils.saveImg(file);
@@ -115,9 +155,14 @@ public class RemoteSenseController {
         return response;
     }
 
+    /**
+     * 获取遥测点位实时遥测数据接口
+     * @param fixture
+     * @return
+     */
     @GetMapping("/api/remoteSense/dynamic")
     public Result getDynamicRemote(@RequestParam("fixture") Integer fixture) {
-        log.info("获取动态数据");
+        log.info("获取动态数据, 点位编号:{}", fixture);
 
         RemoteSenseDomain domain = dataService.findNewestRemoteSenseByFixture(fixture);
         Result result = new Result();
@@ -128,6 +173,9 @@ public class RemoteSenseController {
         }
         HashMap<String, Object> map = new HashMap<>();
         map.put("color", domain.getColor());
+        map.put("no", domain.getNo());
+        map.put("co", domain.getCo());
+        map.put("hc", domain.getHc());
         map.put("location", ConstantUtils.getLocationByFixture(domain.getFixture()));
         map.put("license", domain.getLicensePlate());
         map.put("result", domain.getState());
@@ -141,6 +189,12 @@ public class RemoteSenseController {
     }
 
 
+    /**
+     * 根据id查询遥测信息
+     * @param id
+     * @param size
+     * @return
+     */
     @GetMapping("/api/remoteSense/dynamicDetail")
     public HashMap<String, Object> getDynamicDetailRemote(@RequestParam("id") Long id,
                                                           @RequestParam(value = "size", required = false) Integer size) {
@@ -196,14 +250,63 @@ public class RemoteSenseController {
         return map;
     }
 
-
+    /**
+     * 获取遥测设备编号列表
+     * @return
+     */
     @GetMapping("/api/remoteSense/fixtureList")
     public Result getFixtureList() {
+        log.info("获取设备编号列表");
         Result result = new Result();
         List<Integer> fixtureList = dataService.findFixtureList();
         HashMap<String, Object> map = new HashMap<>();
         map.put("fixtures", fixtureList);
 
         return result.success(map);
+    }
+
+    /**
+     * 遥测数据统计值接口
+     * @param startString
+     * @param endString
+     * @param fixture
+     * @return
+     */
+    @GetMapping("/api/remoteSense/num")
+    public Result getRemoteSenseNumByFixtureAndTimeInternal(@RequestParam("start") String startString, @RequestParam("end") String endString,
+                                                            @RequestParam("fixture") Integer fixture) {
+        log.info("获取遥测数据统计值，开始时间{}, 结束时间{}, 设备编号{}", startString, endString, fixture);
+        if (startString == null || endString == null || fixture == null)
+            return new Result().fail("参数不可为空");
+        Result result = new Result();
+        Date start;
+        Date end;
+        try {
+            start = DateUtils.dateStringToDate(startString, "yyyy-MM-dd HH:mm:ss");
+            end = DateUtils.dateStringToDate(endString, "yyyy-MM-dd HH:mm:ss");
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("exceeded", dataService.findRemoteSenseByTimeInternalAndFixtureAndState(start, end, fixture, false));
+            map.put("pass", dataService.findRemoteSenseByTimeInternalAndFixtureAndState(start, end, fixture, true));
+            map.put("total", (int)map.get("pass") + (int)map.get("exceeded"));
+            return new Result().success(map);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            result.fail();
+            result.setMsg("日期无法解析");
+            return result;
+        }
+    }
+
+    @GetMapping("/api/remoteSense/valid")
+    public Result getRemoteSenseValidCount(@RequestParam("fixture") Integer fixture) {
+        log.info("获取遥测有效/无效条数");
+        List<RemoteSenseDomain> list = dataService.findRemoteSenseByFixture(fixture);
+        int count = statisticService.getNumberOfInvalidRemoteSense(list);
+
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("valid", list.size() - count);
+        map.put("invalid", count);
+
+        return new Result().success(map);
     }
 }

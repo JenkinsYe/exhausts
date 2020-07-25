@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 import java.sql.Timestamp;
 
 /**
- * 年检结果
+ * 年检结果实体类
  * @author YJJ
  * @Date: Created in 19:43 2019-12-09
  */

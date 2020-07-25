@@ -27,6 +27,12 @@
         <result column="SXJGPD" property="result" javaType="Integer" jdbcType="INTEGER"/>
     </resultMap>
 
+    <resultMap id="resultStatistic" type="com.csdn.xs.exhausts.domain.MeasurementStatisticDomain">
+        <result column="VAL01"  property="hc" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="VAL02" property="co" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="VAL03" property="no" javaType="Double" jdbcType="DOUBLE"/>
+    </resultMap>
+
     <select id="findAll" resultMap="result">
         select * from result;
     </select>
@@ -44,6 +50,19 @@
 
     <select id="findResultCountByCode" resultType="java.lang.Integer">
         select count(*) as num from result where  CLSBDH = #{code,jdbcType=VARCHAR} ;
+    </select>
+    <select id="findResultCountByDistanceInternal" resultMap="resultStatistic">
+        SELECT COUNT(*) as count, AVG(VAL01) AS VAL01, AVG(VAL02) as VAL02, AVG(VAL03) as VAL03 FROM result
+        WHERE XSLCS between #{start,jdbcType=BIGINT}  and #{end,jdbcType=BIGINT}
+    </select>
+
+    <select id="findResultCountByMeasurementDateInternal" resultMap="resultStatistic">
+        SELECT COUNT(*) as count, AVG(VAL01) AS VAL01, AVG(VAL02) as VAL02, AVG(VAL03) as VAL03 FROM result
+        WHERE CCDJRQ between #{start,jdbcType=TIMESTAMP} and #{end,jdbcType=TIMESTAMP}
+    </select>
+    <select id="findResultCountByYear" resultMap="resultStatistic">
+        SELECT COUNT(*) as count, AVG(VAL01) AS VAL01, AVG(VAL02) as VAL02, AVG(VAL03) as VAL03 FROM result WHERE
+        TIMESTAMPDIFF(YEAR,CCDJRQ,SXKSSJ) between #{year1,jdbcType=INTEGER}  and #{year2,jdbcType=INTEGER}
     </select>
 
 

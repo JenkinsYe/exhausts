@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.csdn.xs.exhausts.mapper.ModelRoadMapper">
+
+    <resultMap id="modelRoad" type="com.csdn.xs.exhausts.domain.ModelRoadDomain">
+        <result column="道路编号" property="channelID" javaType="String" jdbcType="VARCHAR"/>
+        <result column="计算时间" property="time" javaType="java.util.Date" jdbcType="TIMESTAMP"/>
+        <result column="车辆类型" property="vehicleType" javaType="String" jdbcType="VARCHAR"/>
+        <result column="HC" property="hc" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="CO" property="co" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="NOx" property="nox" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="SO2" property="so2" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="NO" property="no" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="NO2" property="no2" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="PM25" property="pm25" javaType="Double" jdbcType="DOUBLE"/>
+        <result column="PM10" property="pm10" javaType="Double" jdbcType="DOUBLE"/>
+    </resultMap>
+
+    <select id="findModelRoadByID" resultMap="modelRoad">
+        select * from road_model_result where id = #{id,jdbcType=BIGINT}
+    </select>
+
+    <select id="findModelRoadByChannelID" resultMap="modelRoad">
+        select * from road_model_result where 道路编号 = {channelID,jdbcType=VARCHAR}
+    </select>
+
+    <select id="findModelRoadByTimeInternal" resultMap="modelRoad">
+        select * from road_model_result where 计算时间 between #{t1,jdbcType=TIMESTAMP} and #{t2,jdbcType=TIMESTAMP}
+    </select>
+    <select id="findNewestModelRoadDate" resultType="java.util.Date">
+        select 计算时间 from road_model_result order by 计算时间 desc limit 1
+    </select>
+
+    <select id="findModelRoadByTime" resultMap="modelRoad">
+       select * from road_model_result where 计算时间 = #{time,jdbcType=TIMESTAMP}
+    </select>
+    <select id="findModelRoadByTimeAndVehicleType" resultMap="modelRoad">
+       select * from road_model_result where 计算时间 = #{time,jdbcType=TIMESTAMP} and 车辆类型 = #{vehicleType,jdbcType=VARCHAR}
+    </select>
+    <select id="findModelRoadOrderByPollutionType" resultMap="modelRoad">
+       select * from road_model_result where 计算时间 = #{time,jdbcType=TIMESTAMP} and 车辆类型 = #{vehicleType,jdbcType=VARCHAR} order by #{pollutionType}
+    </select>
+
+</mapper>

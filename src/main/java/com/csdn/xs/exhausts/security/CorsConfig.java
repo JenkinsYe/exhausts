@@ -5,6 +5,7 @@ import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 /**
+ * 跨域请求处理
  * @author YJJ
  * @Date: Created in 11:55 2020-06-10
  */

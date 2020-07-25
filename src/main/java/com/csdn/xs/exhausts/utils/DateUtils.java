@@ -76,6 +76,20 @@ public class DateUtils {
     public static Timestamp dateStringToTimestamp(String time) throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd");
         Date date = df.parse(time);
+
         return new java.sql.Timestamp(date.getTime());
+    }
+
+    public static Date dateStringToDate(String time, String pattern) throws ParseException {
+        DateFormat df = new SimpleDateFormat(pattern);
+        Date date = df.parse(time);
+        return date;
+    }
+
+    public static Date getDateYearsAgo(int year) {
+        Calendar calendar = Calendar.getInstance();
+        int nowYear = calendar.get(Calendar.YEAR);
+        calendar.set(Calendar.YEAR, nowYear - year);
+        return calendar.getTime();
     }
 }
