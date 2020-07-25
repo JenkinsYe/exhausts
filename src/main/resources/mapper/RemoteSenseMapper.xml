@@ -206,5 +206,8 @@
     <select id="findRemoteSenseByFixture" resultMap="remoteSense">
         select * from remote_sense where 设备 = #{fixture,jdbcType=INTEGER}
     </select>
+    <select id="findRemoteSenseCountByTimeInternalAndFixture" resultType="java.lang.Integer">
+        select count(*) as sum from remote_sense where 设备 = #{fixture,jdbcType=INTEGER} and 通过时间 between #{start,jdbcType=TIMESTAMP} and #{end,jdbcType=TIMESTAMP}
+    </select>
 
 </mapper>

@@ -10,6 +10,7 @@ import com.csdn.xs.exhausts.utils.ConstantUtils;
 import com.csdn.xs.exhausts.utils.DateUtils;
 import com.csdn.xs.exhausts.utils.FileUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.jdbc.Null;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -297,6 +298,11 @@ public class RemoteSenseController {
         }
     }
 
+    /**
+     * 获取遥测有效/无效条数接口
+     * @param fixture
+     * @return
+     */
     @GetMapping("/api/remoteSense/valid")
     public Result getRemoteSenseValidCount(@RequestParam("fixture") Integer fixture) {
         log.info("获取遥测有效/无效条数");
@@ -308,5 +314,36 @@ public class RemoteSenseController {
         map.put("invalid", count);
 
         return new Result().success(map);
+    }
+
+    /**
+     * 获取时间段内遥测信息条数
+     * @param startTime 开始时间
+     * @param endTime 结束时间
+     * @param fixture 遥测点位
+     * @return
+     */
+    //@GetMapping("/api/remoteSense/count")
+    public Result getRemoteSenseNumByTimeInternal(@RequestParam("start") String startTime,
+                                                  @RequestParam("end") String endTime,
+                                                  @RequestParam("fixture") Integer fixture) {
+        log.info("获取时间段内遥测信息条数");
+        Result result = new Result();
+        Date start,end;
+        try {
+            start = DateUtils.dateStringToDate(startTime, "yyyy-MM-dd HH:mm:ss");
+            end = DateUtils.dateStringToDate(endTime , "yyyy-MM-dd HH:mm:ss");
+            result.setData(new HashMap<String, Object>() {
+                {
+                    put("count", dataService.findRemoteSenseCountByTimeInternalAndFixture(start, end, fixture));
+                }
+            });
+            return result;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            result.fail();
+            result.setMsg("日期无法解析");
+            return result;
+        }
     }
 }

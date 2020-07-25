@@ -593,4 +593,14 @@ public class DataService {
             sqlSession.close();
         }
     }
+
+    public Integer findRemoteSenseCountByTimeInternalAndFixture(Date start, Date end, Integer fixture) {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            RemoteSenseMapper mapper = sqlSession.getMapper(RemoteSenseMapper.class);
+            return mapper.findRemoteSenseCountByTimeInternalAndFixture(start, end, fixture);
+        } finally {
+            sqlSession.close();
+        }
+    }
 }

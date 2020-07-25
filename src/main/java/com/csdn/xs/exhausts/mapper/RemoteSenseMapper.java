@@ -49,4 +49,6 @@ public interface RemoteSenseMapper {
     Integer findPassStateCountByTimeInternalAndFixture(@Param("start") Date start, @Param("end") Date end, @Param("fixture") Integer fixture);
 
     Integer findUnPassStateCountByTimeInternalAndFixture(@Param("start") Date start, @Param("end") Date end, @Param("fixture") Integer fixture);
+
+    Integer findRemoteSenseCountByTimeInternalAndFixture(@Param("start") Date start, @Param("end") Date end, @Param("fixture") Integer fixture);
 }
