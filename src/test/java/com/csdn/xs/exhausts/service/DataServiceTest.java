@@ -3,6 +3,7 @@ package com.csdn.xs.exhausts.service;
 import com.csdn.xs.exhausts.domain.*;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
+import lombok.extern.slf4j.XSlf4j;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

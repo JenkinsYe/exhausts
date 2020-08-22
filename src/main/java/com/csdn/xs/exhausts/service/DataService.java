@@ -603,4 +603,14 @@ public class DataService {
             sqlSession.close();
         }
     }
+
+    public List<RemoteSenseDomain> findRemoteSenseByFixtureAndTimeInternal(Date start, Date end, Integer fixture) {
+        SqlSession sqlSession = factory.openSession(true);
+        try {
+            RemoteSenseMapper mapper = sqlSession.getMapper(RemoteSenseMapper.class);
+            return mapper.findRemoteSenseByFixtureAndTimeInternal(fixture, start, end);
+        } finally {
+            sqlSession.close();
+        }
+    }
 }

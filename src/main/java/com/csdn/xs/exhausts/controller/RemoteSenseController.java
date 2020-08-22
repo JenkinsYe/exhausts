@@ -324,6 +324,7 @@ public class RemoteSenseController {
      * @return
      */
     //@GetMapping("/api/remoteSense/count")
+    @Deprecated
     public Result getRemoteSenseNumByTimeInternal(@RequestParam("start") String startTime,
                                                   @RequestParam("end") String endTime,
                                                   @RequestParam("fixture") Integer fixture) {
@@ -338,6 +339,26 @@ public class RemoteSenseController {
                     put("count", dataService.findRemoteSenseCountByTimeInternalAndFixture(start, end, fixture));
                 }
             });
+            return result;
+        } catch (ParseException e) {
+            e.printStackTrace();
+            result.fail();
+            result.setMsg("日期无法解析");
+            return result;
+        }
+    }
+
+    @GetMapping("/api/remoteSense/pollution")
+    public Result getRemoteSensePollutionAverageByFixtureAndTimeInternal(@RequestParam("start") String startTime,
+                                                                         @RequestParam("end") String endTime,
+                                                                         @RequestParam("fixture") Integer fixture) {
+        log.info("获取遥测点位污染物浓度, fixture{}, 开始时间: {}, 结束时间: {}", fixture, startTime, endTime);
+        Result result = new Result();
+        Date start, end;
+        try {
+            start = DateUtils.dateStringToDate(startTime, "yyyy-MM-dd HH:mm:ss");
+            end = DateUtils.dateStringToDate(endTime , "yyyy-MM-dd HH:mm:ss");
+            result.success(statisticService.getAveragePollutionByFixtureAndTimeInternal(fixture,start,end));
             return result;
         } catch (ParseException e) {
             e.printStackTrace();

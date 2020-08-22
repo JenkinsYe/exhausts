@@ -6,6 +6,7 @@ import com.csdn.xs.exhausts.service.ModelRoadDataService;
 import com.csdn.xs.exhausts.utils.ConstantUtils;
 import com.csdn.xs.exhausts.utils.DateUtils;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.ibatis.annotations.Param;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -13,10 +14,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author YJJ
@@ -44,6 +42,79 @@ public class ModelRoadController {
         map.put("dataList", domains);
         return new Result().success(map);
     }
+
+    @GetMapping("/api/modelRoad/pollution/total/order")
+    public Result getModelRoadPollutionOrderByTimeInternal(@RequestParam("start") String startString,
+                                                           @RequestParam("end") String endString,
+                                                           @RequestParam("order") String pollutionType) {
+        Date start, end;
+        Result result = new Result();
+        try {
+            start = DateUtils.dateStringToDate(startString, "yyyy-MM-dd HH");
+            end = DateUtils.dateStringToDate(endString, "yyyy-MM-dd HH");
+
+            List<ModelRoadDomain> domains = modelRoadDataService.findModelRoadByTimeInternal(start, end);
+            HashMap<String, Double> map = new HashMap<>();
+            for (ModelRoadDomain domain : domains) {
+                if ("HC".equals(pollutionType)) {
+                    if (map.containsKey(domain.getChannelID())) {
+                        map.put(domain.getChannelID(), map.get(domain.getChannelID()) + domain.getHc());
+                    } else {
+                        map.put(domain.getChannelID(), domain.getHc());
+                    }
+                } else if ("CO".equals(pollutionType)) {
+                    if (map.containsKey(domain.getChannelID())) {
+                        map.put(domain.getChannelID(), map.get(domain.getChannelID()) + domain.getCo());
+                    } else {
+                        map.put(domain.getChannelID(), domain.getCo());
+                    }
+                } else if ("NOx".equals(pollutionType)) {
+                    if (map.containsKey(domain.getChannelID())) {
+                        map.put(domain.getChannelID(), map.get(domain.getChannelID()) + domain.getNox());
+                    } else {
+                        map.put(domain.getChannelID(), domain.getNox());
+                    }
+                } else if ("SO2".equals(pollutionType)) {
+                    if (map.containsKey(domain.getChannelID())) {
+                        map.put(domain.getChannelID(), map.get(domain.getChannelID()) + domain.getSo2());
+                    } else {
+                        map.put(domain.getChannelID(), domain.getSo2());
+                    }
+                }
+            }
+
+            List<Order> tempOrder = new ArrayList<>();
+            for (String key: map.keySet()) {
+                tempOrder.add(new Order(0, key, map.get(key)));
+            }
+
+            tempOrder.sort(new Comparator<Order>() {
+                @Override
+                public int compare(Order o1, Order o2) {
+                    if (o1.value < o2.value)
+                        return 1;
+                    return -1;
+                }
+            });
+            for (int i = 0; i < tempOrder.size(); i++) {
+                tempOrder.get(i).rank = i+1;
+            }
+
+
+            HashMap<String, Object> resultMap = new HashMap<>();
+            resultMap.put("size", tempOrder.size());
+            resultMap.put("startTime", start);
+            resultMap.put("endTime", end);
+            resultMap.put("order_by", pollutionType);
+            resultMap.put("dataList", tempOrder);
+
+            return result.success(resultMap);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return new Result().fail("日期无法解析");
+        }
+    }
+
 
     /**
      * 单一车型污染物查询
@@ -118,9 +189,46 @@ public class ModelRoadController {
         }
     }
 
+    @GetMapping("/api/modelRoad/realtime/pollution/total")
+    public Result getModelRoadTotalRealtimePollutionByVehicle(@RequestParam(value = "vehicleType", required = true) String vehicleType) {
+        log.info("车型最新全域污染物查询， 车型{}", vehicleType);
+        Result result = new Result();
+        List<ModelRoadDomain> domains = modelRoadDataService.findNewestModelRoad(vehicleType);
+        Double totalHC, totalCO, totalNOx, totalSO2, totalNO, totalNO2, totalPM25, totalPM10;
+        totalHC = totalCO = totalNOx = totalSO2 = totalNO = totalNO2 = totalPM25 = totalPM10 = 0d;
+        for (ModelRoadDomain domain : domains) {
+            totalHC += domain.getHc();
+            totalCO += domain.getCo();
+            totalNOx += domain.getNox();
+            totalSO2 += domain.getSo2();
+            totalNO += domain.getNo();
+            totalNO2 += domain.getNo2();
+            totalPM25 += domain.getPm25();
+            totalPM10 += domain.getPm10();
+        }
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("hc", totalHC);
+        map.put("co", totalCO);
+        map.put("nox", totalNOx);
+        map.put("so2", totalSO2);
+        map.put("no", totalNO);
+        map.put("no2", totalNO2);
+        map.put("pm25", totalPM25);
+        map.put("pm10", totalPM10);
+        return result.success(map);
+    }
+
     class Order {
         public int rank;
         public String channelID;
         public double value;
+
+        public Order(int rank, String channelID, double value) {
+            this.rank = rank;
+            this.channelID = channelID;
+            this.value = value;
+        }
+
+        public Order(){}
     }
 }

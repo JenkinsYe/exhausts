@@ -38,4 +38,22 @@ public class ModelRoadDomain {
     private Double pm25;
 
     private Double pm10;
+
+    @Override
+    public String toString() {
+        return "ModelRoadDomain{" +
+                "id=" + id +
+                ", channelID='" + channelID + '\'' +
+                ", time=" + time +
+                ", vehicleType='" + vehicleType + '\'' +
+                ", hc=" + hc +
+                ", co=" + co +
+                ", nox=" + nox +
+                ", so2=" + so2 +
+                ", no=" + no +
+                ", no2=" + no2 +
+                ", pm25=" + pm25 +
+                ", pm10=" + pm10 +
+                '}';
+    }
 }

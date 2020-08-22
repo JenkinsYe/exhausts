@@ -50,6 +50,9 @@ public class OptimizeService {
 
         for (int i = 0; i < domains.size(); i++) {
             log.info("no. " + i);
+            if (i == 1358) {
+                log.info("domain value" + domains.get(i).toString());
+            }
             Case veiCase = getCaseID(domains.get(i));
             XGBResultDomain domain = domains.get(i);
             Double we;
@@ -157,7 +160,7 @@ public class OptimizeService {
 
 
     private boolean judgePredictResult(XGBResultDomain domain) {
-        if (domain.getPredictCO() > 6 || domain.getPredictHC() > 2.5 || domain.getPredictNO() > 2.5)
+        if (domain.getPredictCO() > 8 || domain.getPredictHC() > 1.6 || domain.getPredictNO() > 1.3)
             return false;
         return true;
     }

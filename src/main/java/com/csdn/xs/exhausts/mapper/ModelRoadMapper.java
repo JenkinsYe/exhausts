@@ -27,4 +27,12 @@ public interface ModelRoadMapper {
 
     List<ModelRoadDomain> findModelRoadOrderByPollutionType(@Param("time") Date time, @Param("vehicleType") String vehicleType,
                                                             @Param("pollutionType") String pollutionType);
+
+    List<ModelRoadDomain> findModelRoadByTimeInternalAndVehicleType(@Param("start") Date start,
+                                                                    @Param("end") Date end,
+                                                                    @Param("vehicle") String type);
+
+    List<ModelRoadDomain> findModelRoadByChannelIDAndTimeInternal(@Param("start") Date start,
+                                                                  @Param("end") Date end,
+                                                                  @Param("channelID") String channelID);
 }

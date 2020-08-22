@@ -46,6 +46,8 @@ public interface RemoteSenseMapper {
 
     List<Integer> findDistictFixture();
 
+    List<RemoteSenseDomain> findRemoteSenseByFixtureAndTimeInternal(@Param("fixture") Integer fixture, @Param("start") Date start, @Param("end") Date end);
+
     Integer findPassStateCountByTimeInternalAndFixture(@Param("start") Date start, @Param("end") Date end, @Param("fixture") Integer fixture);
 
     Integer findUnPassStateCountByTimeInternalAndFixture(@Param("start") Date start, @Param("end") Date end, @Param("fixture") Integer fixture);

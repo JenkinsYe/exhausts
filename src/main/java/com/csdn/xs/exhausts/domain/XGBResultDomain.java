@@ -49,4 +49,28 @@ public class XGBResultDomain {
     private Double predictNO;
 
     private Double vei;
+
+    @Override
+    public String toString() {
+        return "XGBResultDomain{" +
+                "id=" + id +
+                ", remoteState=" + remoteState +
+                ", license='" + license + '\'' +
+                ", cCO=" + cCO +
+                ", cCO2=" + cCO2 +
+                ", cNO=" + cNO +
+                ", cHC=" + cHC +
+                ", testID='" + testID + '\'' +
+                ", distance=" + distance +
+                ", weight=" + weight +
+                ", testState=" + testState +
+                ", velHC=" + velHC +
+                ", velCO=" + velCO +
+                ", velNO=" + velNO +
+                ", predictHC=" + predictHC +
+                ", predictCO=" + predictCO +
+                ", predictNO=" + predictNO +
+                ", vei=" + vei +
+                '}';
+    }
 }
