@@ -38,11 +38,5 @@ public class TestController {
         return "success";
     }
 
-    @GetMapping("/api/test")
-    public void test() {
-        log.info("开始计算");
-        optimizeService.startService();
-        log.info("计算结束");
-    }
 
 }
